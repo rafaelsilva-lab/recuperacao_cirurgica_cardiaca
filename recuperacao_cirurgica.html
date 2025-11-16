@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rotina de Recuperação - Semana 1</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .day-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .day-btn {
+            padding: 12px 24px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .day-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .day-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .routine-section {
+            margin-bottom: 25px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            font-size: 1.3em;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-content {
+            padding: 20px;
+        }
+
+        .activity {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .activity-time {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+
+        .activity-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 1.05em;
+        }
+
+        .activity-description {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .checkbox-item:hover {
+            background: #f0f0f0;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .checkbox-item.completed {
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+
+        .alert {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .alert-title {
+            color: #856404;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .alert-content {
+            color: #856404;
+            line-height: 1.6;
+        }
+
+        .warning {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+        }
+
+        .warning .alert-title,
+        .warning .alert-content {
+            color: #721c24;
+        }
+
+        .info {
+            background: #d1ecf1;
+            border: 2px solid #17a2b8;
+        }
+
+        .info .alert-title,
+        .info .alert-content {
+            color: #0c5460;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .emoji {
+            font-size: 1.5em;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .day-btn {
+                padding: 10px 16px;
+                font-size: 0.9em;
+            }
+        }
+
+        .reset-btn {
+            padding: 12px 24px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏥 Rotina de Recuperação Pós-Cirurgia</h1>
+            <p class="subtitle">Primeira Semana em Casa - Revascularização do Miocárdio</p>
+        </header>
+
+        <div class="day-selector" id="daySelector">
+            <button class="day-btn active" onclick="selectDay(1)">Dia 1</button>
+            <button class="day-btn" onclick="selectDay(2)">Dia 2</button>
+            <button class="day-btn" onclick="selectDay(3)">Dia 3</button>
+            <button class="day-btn" onclick="selectDay(4)">Dia 4</button>
+            <button class="day-btn" onclick="selectDay(5)">Dia 5</button>
+            <button class="day-btn" onclick="selectDay(6)">Dia 6</button>
+            <button class="day-btn" onclick="selectDay(7)">Dia 7</button>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar">0%</div>
+            </div>
+        </div>
+
+        <div class="alert warning">
+            <div class="alert-title">⚠️ SINAIS DE ALERTA - PROCURE ATENDIMENTO:</div>
+            <div class="alert-content">
+                • Falta de ar que piora ou surge novamente<br>
+                • Dor no peito tipo angina (irradia para braço/mandíbula)<br>
+                • Febre acima de 38°C<br>
+                • Tosse com secreção amarela/verde/sangue<br>
+                • Inchaço nas pernas que piora rapidamente<br>
+                • Vermelhidão, calor ou secreção no esterno
+            </div>
+        </div>
+
+        <div class="alert info">
+            <div class="alert-title">📋 MEDICAÇÕES</div>
+            <div class="alert-content">
+                Tomar todos os remédios nos horários prescritos. NÃO esquecer os antiagregantes plaquetários (AAS, clopidogrel) - são fundamentais para manter as pontes pérvias!
+            </div>
+        </div>
+
+        <!-- AO ACORDAR -->
+        <div class="routine-section">
+            <div class="section-header">
+                <span class="emoji">🌅</span> AO ACORDAR (6h-8h)
+            </div>
+            <div class="section-content">
+                <div class="activity">
+                    <div class="activity-time">⏰ Logo ao acordar</div>
+                    <div class="activity-title">Temperatura Corporal</div>
+                    <div class="activity-description">
+                        Medir e anotar a temperatura. Se maior que 38°C, avisar família e médico.
+                    </div>
+                    <div class="checkbox-item" onclick="toggleCheck(this)">
+                        <input type="checkbox" id="temp-morning">
+                        <label>Temperatura medida e anotada</label>
+                    </div>
+                </div>
+
+                <div class="activity">
+                    <div class="activity-time">⏰ Antes do café</div>
+                    <div class="activity-title">Fisioterapia Respiratória</div>
+                    <div class="activity-description">
+                        <strong>10-15 inspirações profundas</strong><br>
+                        • Sentar confortavelmente<br>
+                        • Expirar completamente<br>
+                        • Inspirar lenta e profundamente pelo nariz<br>
+                        • Segurar por 3-5 segundos<br>
+                        • Soltar devagar pela boca<br>
+                        • Descansar entre as inspirações
+                    </div>
+                    <div class="checkbox-item" onclick="toggleCheck(this)">
+                        <input type="checkbox">
+                        <label>Fisioterapia respiratória realizada (10-15x)</label>
+                    </div>
+                </div>
+
+                <div class="activity">
+                    <div class="activity-time">⏰ Após café (esperar 1h)</div>
+                    <div class="activity-title">Caminhada 1</div>
+                    <div class="activity-description">
+                        <strong>5-10 minutos</strong> dentro de casa<br>
+                        • Ritmo leve e confortável<br>
+                        • Deve conseguir conversar enquanto caminha<br>
+                        • Parar se sentir falta de ar, dor ou tontura<br>
+                        • Alguém deve acompanhar
+                    </div>
+                    <div class="checkbox-item" onclick="toggleCheck(this)">
+                        <input type="checkbox">
+                        <label>Caminhada matinal concluída (___min)</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MEIO DA MANHÃ -->
+        <div class="routine-section">
+            <div class="section-header">
+                <span class="emoji">☀️</span> MEIO DA MANHÃ (10h-11h)
+            </div>
+            <div class="section-content">
+                <div class="activity">
+                    <div class="activity-title">Exercícios Respiratórios Simples</div>
+                    <div class="activity-description">
+                        <strong>5-10 respirações profundas</strong><br>
+                        • Inspirar profundamente pelo nariz<br>
+                        • Segurar 2-3 segundos<br>
+                        • Soltar devagar pela boca<br>
+                        • Sentar ou ficar semi-sentado
+                    </div>
+                    <div class="checkbox-item" onclick="toggleCheck(this)">
+                        <input type="checkbox">
+                        <label>Exercícios respiratórios feitos</label>
+                    </div>
+                </div>
+
+                <div class="activity">
+                    <div class="activity-title">Caminhada 2</div>
+                    <div class="activity-description">
+                        <strong>5-10 minutos</strong> dentro de casa ou área plana próxima
+                    </div>
+                    <div class="checkbox-item" onclick="toggleCheck(this)">
+                        <input type="checkbox">
+                        <label>Caminhada concluída (___min)</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- APÓS ALMOÇO -->
+        <div class="routine-section">
+            <div class="section-header">
+                <span class="emoji">🍽️</span> APÓS ALMOÇO (13h-14h)
+            </div>
+            <div class="section-content">
+                <div class="alert">
+                    <div class="alert-title">⏰ IMPORTANTE</div>
+                    <div class="alert-content">
+                        Esperar pelo menos 1 hora após comer para fazer exercícios!
+                    </div>
+                </div>
+
+                <div class="activity">
+                    <div class="activity-title">Fisioterapia Respiratória</div>
+                    <div class="activity-description">
+                        <strong>10-15 inspirações profundas</strong><br>
+                        • Inspirar profundamente pelo nariz<br>
+                        • Segurar 3-5 segundos<br>
+                        • Soltar devagar pela boca<br>
+                        • Descansar entre as inspirações
+                    </div>
+                    <div class="checkbox-item" onclick="toggleCheck(this)">
+                        <input type="checkbox">
+                        <label>Fisioterapia respiratória realizada (10-15x)</label>
+                    </div>
+                </div>
+
+                <div class="activity">
+                    <div class="activity-title">Caminhada 3</div>
+                    <div class="activity-description">
+                        <strong>5-10 minutos</strong> em ritmo confortável
+                    </div>
+                    <div class="checkbox-item" onclick="toggleCheck(this)">
+                        <input type="checkbox">
+                        <label>Caminhada concluída (___min)</label>
+                    </div>
+                </div>
+
+                <div class="activity">
+                    <div class="activity-title">Tosse Estimulada (se houver secreção)</div>
+                    <div class="activity-description">
+                        • Abraçar um travesseiro contra o peito<br>
+                        • Tossir para expelir secreção<br>
+                        • Não engolir a secreção, cuspir em lenço/papel<br>
+                        • Fazer 2-3 vezes se necessário
+                    </div>
+                    <div class="checkbox-item" onclick="toggleCheck(this)">
+                        <input type="checkbox">
+                        <label>Tosse realizada (se necessário)</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MEIO DA TARDE -->
+        <div class="routine-section">
+            <div class="section-header">
+                <span class="emoji">🌤️</span> MEIO DA TARDE (15h-16h)
+            </div>
+            <div class="section-content">
+                <div class="activity">
+                    <div class="activity-title">Exercícios Respiratórios Simples</div>
+                    <div class="activity-description">
+                        <strong>5-10 respirações profundas</strong> (protocolo padrão)
+                    </div>
+                    <div class="checkbox-item" onclick="toggleCheck(this)">
+                        <input type="checkbox">
+                        <label>Exercícios respiratórios feitos</label>
+                    </div>
+                </div>
+
+                <div class="activity">
+                    <div class="activity-title">Caminhada 4</div>
+                    <div class="activity-description">
+                        <strong>5-10 minutos</strong> - pode ser dentro ou fora de casa se clima agradável
+                    </div>
+                    <div class="checkbox-item" onclick="toggleCheck(this)">
+                        <input type="checkbox">
+                        <label>Caminhada concluída (___min)</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FINAL DA TARDE -->
+        <div class="routine-section">
+            <div class="section-header">
+                <span class="emoji">🌆</span> FINAL DA TARDE (17h-18h)
+            </div>
+            <div class="section-content">
+                <div class="activity">
+                    <div class="activity-title">Fisioterapia Respiratória</div>
+                    <div class="activity-description">
+                        <strong>10-15 inspirações profundas</strong><br>
+                        • Inspirar profundamente pelo nariz<br>
+                        • Segurar 3-5 segundos<br>
+                        • Soltar devagar pela boca
+                    </div>
+                    <div class="checkbox-item" onclick="toggleCheck(this)">
+                        <input type="checkbox">
+                        <label>Fisioterapia respiratória realizada (10-15x)</label>
+                    </div>
+                </div>
+
+                <div class="activity">
+                    <div class="activity-title">Caminhada 5</div>
+                    <div class="activity-description">
+                        <strong>5-10 minutos</strong> - última caminhada do dia
+                    </div>
+                    <div class="checkbox-item" onclick="toggleCheck(this)">
+                        <input type="checkbox">
+                        <label>Caminhada concluída (___min)</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ANTES DE DORMIR -->
+        <div class="routine-section">
+            <div class="section-header">
+                <span class="emoji">🌙</span> ANTES DE DORMIR (21h-22h)
+            </div>
+            <div class="section-content">
+                <div class="activity">
+                    <div class="activity-title">Fisioterapia Respiratória</div>
+                    <div class="activity-description">
+                        <strong>10-15 inspirações profundas</strong> - última sessão do dia<br>
+                        • Inspirar profundamente pelo nariz<br>
+                        • Segurar 3-5 segundos<br>
+                        • Soltar devagar pela boca
+                    </div>
+                    <div class="checkbox-item" onclick="toggleCheck(this)">
+                        <input type="checkbox">
+                        <label>Fisioterapia respiratória realizada (10-15x)</label>
+                    </div>
+                </div>
+
+                <div class="activity">
+                    <div class="activity-title">Exercícios Respiratórios</div>
+                    <div class="activity-description">
+                        <strong>5-10 respirações profundas</strong> antes de deitar
+                    </div>
+                    <div class="checkbox-item" onclick="toggleCheck(this)">
+                        <input type="checkbox">
+                        <label>Exercícios respiratórios feitos</label>
+                    </div>
+                </div>
+
+                <div class="activity">
+                    <div class="activity-title">Preparar para Dormir</div>
+                    <div class="activity-description">
+                        • Dormir com cabeceira elevada (30-45°)<br>
+                        • Usar travesseiros extras se necessário<br>
+                        • NÃO deitar completamente reto
+                    </div>
+                    <div class="checkbox-item" onclick="toggleCheck(this)">
+                        <input type="checkbox">
+                        <label>Cabeceira elevada preparada</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="alert">
+            <div class="alert-title">📝 ATIVIDADES PERMITIDAS NA 1ª SEMANA:</div>
+            <div class="alert-content">
+                ✅ Fazer café, esquentar comida no micro-ondas<br>
+                ✅ Lavar louça leve<br>
+                ✅ Tomar banho sozinho (após liberar curativo)<br>
+                ✅ Se vestir<br>
+                ✅ Usar celular, ler, assistir TV<br>
+                <br>
+                ❌ Carregar peso (NADA acima de 2-3kg)<br>
+                ❌ Lavar/estender roupa<br>
+                ❌ Varrer, passar pano<br>
+                ❌ Abrir/fechar portão pesado<br>
+                ❌ Dirigir<br>
+                ❌ Elevar braços acima da cabeça
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="reset-btn" onclick="resetDay()">🔄 Resetar Dia Atual</button>
+        </div>
+
+        <div style="text-align: center; margin-top: 20px; color: #666; font-size: 0.9em;">
+            <p>Baseado em: JAMA Surgery (2019), BIDMC, Columbia Surgery, El Camino Health, Fraser Health, Cleveland Clinic, MedlinePlus</p>
+            <p style="margin-top: 10px;"><strong>Forças na recuperação! 💪❤️</strong></p>
+        </div>
+    </div>
+
+    <script>
+        let currentDay = 1;
+
+        function selectDay(day) {
+            currentDay = day;
+            const buttons = document.querySelectorAll('.day-btn');
+            buttons.forEach((btn, index) => {
+                btn.classList.toggle('active', index + 1 === day);
+            });
+            loadDayProgress();
+        }
+
+        function toggleCheck(element) {
+            const checkbox = element.querySelector('input[type="checkbox"]');
+            checkbox.checked = !checkbox.checked;
+            element.classList.toggle('completed', checkbox.checked);
+            saveDayProgress();
+            updateProgressBar();
+        }
+
+        function saveDayProgress() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const progress = {};
+            checkboxes.forEach((checkbox, index) => {
+                progress[index] = checkbox.checked;
+            });
+            const storageKey = `day${currentDay}_progress`;
+            const storedData = {};
+            for (let i = 0; i < 100; i++) {
+                const key = `day${i}_progress`;
+                const value = localStorage.getItem(key);
+                if (value) storedData[key] = value;
+            }
+            storedData[storageKey] = JSON.stringify(progress);
+            Object.keys(storedData).forEach(key => {
+                localStorage.setItem(key, storedData[key]);
+            });
+        }
+
+        function loadDayProgress() {
+            const storageKey = `day${currentDay}_progress`;
+            const saved = localStorage.getItem(storageKey);
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            
+            if (saved) {
+                const progress = JSON.parse(saved);
+                checkboxes.forEach((checkbox, index) => {
+                    checkbox.checked = progress[index] || false;
+                    const item = checkbox.closest('.checkbox-item');
+                    if (item) {
+                        item.classList.toggle('completed', checkbox.checked);
+                    }
+                });
+            } else {
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                    const item = checkbox.closest('.checkbox-item');
+                    if (item) {
+                        item.classList.remove('completed');
+                    }
+                });
+            }
+            updateProgressBar();
+        }
+
+        function updateProgressBar() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const total = checkboxes.length;
+            const checked = Array.from(checkboxes).filter(cb => cb.checked).length;
+            const percentage = Math.round((checked / total) * 100);
+            
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = percentage + '%';
+            progressBar.textContent = percentage + '%';
+        }
+
+        function resetDay() {
+            if (confirm('Tem certeza que deseja resetar o progresso do dia atual?')) {
+                localStorage.removeItem(`day${currentDay}_progress`);
+                loadDayProgress();
+            }
+        }
+
+        // Inicializar ao carregar
+        window.onload = function() {
+            loadDayProgress();
+        };
+    </script>
+</body>
+</html>
